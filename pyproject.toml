@@ -3,14 +3,14 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "py-splitst"
+name = "splitst"
 version = "0.1.0"
 description = "Pure-Python SPLIT for spatial transcriptomics purification, AnnData-native and R-parity-audited."
 readme = "README.md"
 requires-python = ">=3.9"
-license = { text = "GPL-3.0-only" }
+license = { text = "GPL-3.0-or-later" }
 authors = [
-  { name = "OmicVerse Team" }
+  { name = "SPLIT Python Port" }
 ]
 keywords = ["spatial transcriptomics", "SPLIT", "AnnData", "purification", "deconvolution"]
 classifiers = [
@@ -45,9 +45,8 @@ Repository = "https://github.com/omicverse/py-SPLIT"
 Issues = "https://github.com/omicverse/py-SPLIT/issues"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+include = ["splitst*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-

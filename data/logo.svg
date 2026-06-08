@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="260" viewBox="0 0 900 260" role="img" aria-label="SPLIT-ST">
+  <rect width="900" height="260" rx="28" fill="#0f172a"/>
+  <g transform="translate(70 62)">
+    <circle cx="35" cy="35" r="20" fill="#38bdf8"/>
+    <circle cx="95" cy="35" r="20" fill="#f97316"/>
+    <circle cx="155" cy="35" r="20" fill="#22c55e"/>
+    <circle cx="65" cy="100" r="20" fill="#22c55e"/>
+    <circle cx="125" cy="100" r="20" fill="#38bdf8"/>
+    <path d="M53 42 L77 88 M113 42 L83 88 M137 42 L132 82 M55 35 H75 M115 35 H135 M85 100 H105" stroke="#e2e8f0" stroke-width="7" stroke-linecap="round"/>
+  </g>
+  <text x="300" y="112" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700" fill="#f8fafc">SPLIT-ST</text>
+  <text x="304" y="164" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#cbd5e1">spatial transcript purification</text>
+</svg>
+
