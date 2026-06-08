@@ -152,7 +152,7 @@ Current small fixture result:
 | Purified L2 distance to clean | 3.08e-09 |
 | Minimum reassigned count | > 0 |
 
-R parity scripts are tracked in `scripts/` and will be wired once the benchmark environment has R and the original SPLIT package installed.
+R parity is tracked as a future benchmark target, but this repository intentionally ships no R runtime code and has no R dependency.
 
 ---
 

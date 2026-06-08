@@ -35,3 +35,8 @@ Validation:
 pytest
 # 29 passed
 ```
+
+## 2026-06-08 - Remove R Runtime Placeholder
+
+- Removed the placeholder `.R` parity script so the repository remains visibly pure Python.
+- Kept R parity as a documented future external benchmark target.

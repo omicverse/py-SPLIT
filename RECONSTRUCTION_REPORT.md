@@ -81,7 +81,7 @@ python benchmarks/benchmark_split.py
 
 ## 6. Known Limitations
 
-1. R parity is not yet wired because the current development machine has no `Rscript`.
+1. R parity is not yet wired because the current development machine has no `Rscript`; the repository intentionally ships no R runtime code.
 2. RCTD and Seurat object adapters are outside the core package; users should pass generic weights and reference profiles.
 3. Plotting is kept in notebooks; core package has no plotting API yet.
 4. Residual reassignment implements practical neighbor-based redistribution, pending exact comparison against the upstream tutorial outputs.

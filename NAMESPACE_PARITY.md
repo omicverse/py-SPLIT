@@ -10,7 +10,7 @@ This file tracks parity between the original R SPLIT workflow and `splitst`.
 | SPLIT-shift label swap metadata | `splitst.balance(..., swap_labels=True)` | Implemented |
 | Residual transcript reassignment | `splitst.reassign_residuals()` | Implemented |
 | R object-specific RCTD/Seurat post-processing | Not planned for core package | Out of scope |
-| R numeric parity fixture | `scripts/run_r_parity.R` | Pending R environment |
+| R numeric parity fixture | External benchmark artifact | Pending R environment |
 
 Acceptance target for R parity:
 
@@ -18,4 +18,3 @@ Acceptance target for R parity:
 - sparse float path: `rtol=1e-7`, `atol=1e-10`
 - identical cell/gene order
 - documented sparse nonzero pattern differences, if any
-
