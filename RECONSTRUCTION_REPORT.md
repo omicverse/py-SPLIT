@@ -47,7 +47,7 @@ Current test gate:
 
 ```bash
 pytest
-# 8 passed
+# 29 passed
 ```
 
 ## 4. Benchmark Evidence
@@ -74,7 +74,7 @@ python benchmarks/benchmark_split.py
 | Check | Status |
 |---|---|
 | `pip install -e ".[dev]"` succeeds | Pass |
-| `pytest` green | Pass |
+| `pytest` green | Pass (29 tests) |
 | Quickstart notebook pre-executed | Pass |
 | License matches upstream class | Pass |
 | CI workflow added | Pass |
@@ -100,4 +100,3 @@ python benchmarks/benchmark_split.py
 | Author | splitst port (agent-assisted) |
 | Date | 2026-06-08 |
 | Audit classification | A/B pending R parity |
-

@@ -60,8 +60,13 @@ def _align_weights(deconvolution_weights, obs_names: pd.Index) -> pd.DataFrame:
     if weights.columns.hasnans or not weights.columns.is_unique:
         raise ValueError("`deconvolution_weights` columns must be unique cell-type names.")
     weights = weights.astype(float)
-    weights = weights.loc[:, sorted(weights.columns.astype(str))]
     weights.columns = weights.columns.astype(str)
+    weights = weights.loc[:, sorted(weights.columns)]
+    values = weights.to_numpy(dtype=float)
+    if not np.isfinite(values).all():
+        raise ValueError("`deconvolution_weights` must contain only finite values.")
+    if (values < 0).any():
+        raise ValueError("`deconvolution_weights` cannot contain negative values.")
     return weights
 
 
@@ -93,7 +98,13 @@ def _align_reference(reference, cell_types: pd.Index, var_names: pd.Index) -> pd
             "`reference` must be either cell-types x genes or genes x cell-types "
             "and align to deconvolution weights and `adata.var_names`."
         )
-    return ref.astype(float)
+    ref = ref.astype(float)
+    values = ref.to_numpy(dtype=float)
+    if not np.isfinite(values).all():
+        raise ValueError("`reference` must contain only finite values.")
+    if (values < 0).any():
+        raise ValueError("`reference` cannot contain negative values.")
+    return ref
 
 
 def _infer_primary(weights: pd.DataFrame, primary_cell_type) -> pd.Series:
@@ -125,6 +136,11 @@ def _prepare_inputs(adata, deconvolution_weights, reference, primary_cell_type, 
     counts = _layer_matrix(adata, layer)
     if counts.shape != (adata.n_obs, adata.n_vars):
         raise ValueError("The selected AnnData matrix must be cells x genes.")
+    data = counts.data if sparse.issparse(counts) else np.asarray(counts)
+    if not np.isfinite(data).all():
+        raise ValueError("The selected AnnData matrix must contain only finite values.")
+    if (data < 0).any():
+        raise ValueError("The selected AnnData matrix cannot contain negative counts.")
     return _AlignedInputs(counts, weights, reference, primary, obs_names, var_names, pd.Index(weights.columns))
 
 
@@ -239,8 +255,12 @@ def _resolve_series(values, index: pd.Index, name: str) -> pd.Series:
 def _knn_indices(coords: np.ndarray, k: int, radius: float | None) -> tuple[np.ndarray, np.ndarray]:
     if k <= 0:
         raise ValueError("`k` must be positive.")
+    if radius is not None and radius < 0:
+        raise ValueError("`radius` must be non-negative when provided.")
     if coords.ndim != 2:
         raise ValueError("Spatial coordinates must be a two-dimensional array.")
+    if not np.isfinite(coords).all():
+        raise ValueError("Spatial coordinates must contain only finite values.")
     n = coords.shape[0]
     query_k = min(k + 1, n)
     dist, idx = cKDTree(coords).query(coords, k=query_k)
@@ -272,6 +292,9 @@ def spatial_score(
         secondary, second_weight = _second_type_and_weight(weights, primary)
     else:
         secondary = _resolve_series(secondary_cell_type, obs_names, "secondary_cell_type").astype("object")
+        missing = sorted({str(value) for value in secondary.dropna()} - set(weights.columns))
+        if missing:
+            raise ValueError(f"`secondary_cell_type` contains types absent from weights: {missing[:5]}")
         second_weight = pd.Series([0.0 if pd.isna(secondary.loc[cell]) else float(weights.loc[cell, secondary.loc[cell]]) for cell in obs_names], index=obs_names)
     idx, dist = _knn_indices(np.asarray(adata.obsm[spatial_key], dtype=float), k=k, radius=radius)
     cell_types = list(weights.columns.astype(str))
@@ -349,6 +372,8 @@ def balance(
     swap_labels: bool = False,
 ):
     """Keep raw profiles for low-contamination cells and purified profiles otherwise."""
+    if not np.isfinite(threshold):
+        raise ValueError("`threshold` must be finite.")
     if purified_layer not in adata.layers:
         raise KeyError(f"`adata.layers[{purified_layer!r}]` was not found.")
     if score_key not in adata.obs:
@@ -358,6 +383,8 @@ def balance(
     if raw.shape != purified.shape:
         raise ValueError("Raw and purified matrices must have the same shape.")
     scores = np.asarray(adata.obs[score_key], dtype=float)
+    if not np.isfinite(scores).all():
+        raise ValueError(f"`adata.obs[{score_key!r}]` must contain only finite values.")
     use_purified = scores > threshold
     removed = np.zeros(adata.n_obs, dtype=bool)
     if spot_class_key is not None:
@@ -402,6 +429,8 @@ def reassign_residuals(
     self_keep: float = 0.0,
 ):
     """Reassign positive residual counts from purified cells to neighbors."""
+    if mode not in {"uniform", "count_proportional"}:
+        raise ValueError("`mode` must be 'uniform' or 'count_proportional'.")
     if purified_layer not in adata.layers:
         raise KeyError(f"`adata.layers[{purified_layer!r}]` was not found.")
     if spatial_key not in adata.obsm:
@@ -410,6 +439,8 @@ def reassign_residuals(
         raise ValueError("`self_keep` must be between 0 and 1.")
     raw = _matrix_as_csr(_layer_matrix(adata, raw_layer))
     purified = _matrix_as_csr(adata.layers[purified_layer])
+    if raw.shape != purified.shape:
+        raise ValueError("Raw and purified matrices must have the same shape.")
     residual = raw - purified
     residual.data[residual.data < 0] = 0
     residual.eliminate_zeros()
@@ -425,12 +456,14 @@ def reassign_residuals(
     rows: list[int] = []
     cols: list[int] = []
     vals: list[float] = []
+    sender_has_receivers = np.zeros(adata.n_obs, dtype=bool)
     for sender, is_sender in enumerate(senders):
         if not is_sender:
             continue
         receivers = np.array([j for j in idx[sender] if j >= 0 and j != sender], dtype=int)
         if receivers.size == 0:
             continue
+        sender_has_receivers[sender] = True
         if self_keep > 0:
             rows.append(sender)
             cols.append(sender)
@@ -442,8 +475,6 @@ def reassign_residuals(
             weights[~np.isfinite(weights) | (weights < 0)] = 0
             total = weights.sum()
             weights = weights / total if total > 0 else np.full(receivers.size, 1.0 / receivers.size)
-        else:
-            raise ValueError("`mode` must be 'uniform' or 'count_proportional'.")
         rows.extend([sender] * receivers.size)
         cols.extend(receivers.tolist())
         vals.extend((weights * (1 - self_keep)).tolist())
@@ -453,6 +484,23 @@ def reassign_residuals(
     reassigned.eliminate_zeros()
     adata.layers[result_layer] = reassigned.tocsr()
     adata.uns["split_reassignment_operator"] = operator
+    residual_mass_by_sender = np.asarray(residual.sum(axis=1)).ravel()
+    assigned_mass = float(residual_mass_by_sender[sender_has_receivers].sum())
+    unassigned_mass = float(residual_mass_by_sender[senders & ~sender_has_receivers].sum())
+    adata.uns["split_residual_stats"] = {
+        "raw_total": float(raw.sum()),
+        "purified_total": float(purified.sum()),
+        "positive_residual_total": float(residual.sum()),
+        "assigned_residual_total": assigned_mass * (1 - self_keep),
+        "self_kept_residual_total": assigned_mass * self_keep,
+        "unassigned_residual_total": unassigned_mass,
+        "n_sender_cells": int(senders.sum()),
+        "n_sender_cells_with_receivers": int(sender_has_receivers.sum()),
+        "mode": mode,
+        "k": k,
+        "radius": radius,
+        "self_keep": self_keep,
+    }
     return None
 
 
@@ -460,4 +508,3 @@ split_purify = purify
 split_spatial_score = spatial_score
 split_balance = balance
 split_reassign_residuals = reassign_residuals
-

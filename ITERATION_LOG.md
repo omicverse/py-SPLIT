@@ -22,3 +22,16 @@ pytest
 - Updated README to include badges, pipeline overview, algorithmic fidelity, benchmark table, notebooks, API reference, and citation/license sections.
 - Added simple `data/logo.svg` for README branding.
 
+## 2026-06-08 - Test Hardening
+
+- Added stricter validation for non-finite/negative weights, reference profiles, counts, spatial coordinates, thresholds, and radius.
+- Added explicit secondary-label validation before neighborhood scoring.
+- Added residual reassignment mass accounting in `adata.uns["split_residual_stats"]`.
+- Expanded tests from 8 to 29 cases, covering copy mode, X-layer input, no-neighbor spatial scoring, spot-class balancing, self-keep residual accounting, reproducible fixtures, input alignment, NumPy inputs, and invalid argument paths.
+
+Validation:
+
+```bash
+pytest
+# 29 passed
+```

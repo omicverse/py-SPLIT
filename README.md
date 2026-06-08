@@ -156,6 +156,24 @@ R parity scripts are tracked in `scripts/` and will be wired once the benchmark 
 
 ---
 
+## Testing
+
+Run the full Python test suite:
+
+```bash
+pytest
+```
+
+Current local gate:
+
+```text
+29 passed
+```
+
+The tests cover dense/sparse parity, label alignment, copy mode, raw/purified balancing, SPLIT-shift swaps, residual reassignment mass accounting, no-neighbor spatial scoring, and invalid input rejection.
+
+---
+
 ## Notebooks
 
 | Notebook | What it covers |
@@ -222,4 +240,3 @@ If you use this package, please cite the original SPLIT work and acknowledge thi
 ## License
 
 GNU GPLv3 — matching the upstream SPLIT license.
-
