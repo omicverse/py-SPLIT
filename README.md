@@ -21,7 +21,7 @@
 
 # SPLIT-ST
 
-A **pure-Python re-implementation of SPLIT** for spatial transcriptomics purification.
+A **pure-Python re-implementation of [SPLIT](https://github.com/bdsc-tds/SPLIT)** for spatial transcriptomics purification.
 
 - AnnData-native — works directly with cell x gene spatial matrices
 - No `rpy2`, no R install, no RCTD/Seurat object dependency
@@ -235,8 +235,15 @@ from splitst import (
 
 ## Citation
 
-If you use this package, please cite the original SPLIT work and acknowledge this repository for the Python port.
+This package is a Python re-implementation of the original SPLIT method. If you use this package, please cite the original SPLIT publication:
 
+Bilous, M., Buszta, D., Bac, J., Kang, S., Dong, Y., Tissot, S., Andre, S., Alexandre-Gaveta, M., Voize, C., Peters, S., Homicsko, K. & Gottardo, R.
+Resolving sensitivity, specificity and signal contamination in Xenium spatial transcriptomics.
+Nature Methods (2026). https://doi.org/10.1038/s41592-026-03089-8
+
+Original SPLIT R package: https://github.com/bdsc-tds/SPLIT
+
+Please also acknowledge this repository when using the Python port.
 ## License
 
-GNU GPLv3 — matching the upstream SPLIT license.
+GNU GPLv3 — matching the upstream [SPLIT](https://github.com/bdsc-tds/SPLIT) license.
