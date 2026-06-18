@@ -43,6 +43,8 @@ dev = [
 Homepage = "https://github.com/omicverse/py-SPLIT"
 Repository = "https://github.com/omicverse/py-SPLIT"
 Issues = "https://github.com/omicverse/py-SPLIT/issues"
+Upstream = "https://github.com/bdsc-tds/SPLIT"
+Paper = "https://doi.org/10.1038/s41592-026-03089-8"
 
 [tool.setuptools.packages.find]
 include = ["splitst*"]
