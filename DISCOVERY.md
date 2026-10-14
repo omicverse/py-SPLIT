@@ -6,7 +6,8 @@
 - **Description**: Spatial transcript purification for contamination-aware spatial transcriptomics workflows
 - **License**: GPL-3
 - **Repository**: https://github.com/bdsc-tds/SPLIT
-
+- **Upstream citation**: Bilous et al., *Nature Methods* (2026), https://doi.org/10.1038/s41592-026-03089-8
+  
 ## Existing py- Mirror Check
 
 - **py-SPLIT exists in omicverse?**: No - this is a new port.
