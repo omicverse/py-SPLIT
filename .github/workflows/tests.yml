@@ -6,7 +6,8 @@ on:
 
 jobs:
   pytest:
-    runs-on: ubuntu-latest
+    # Keep Python 3.9 test coverage: ubuntu-latest (26.04) has no 3.9 build.
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
