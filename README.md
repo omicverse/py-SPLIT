@@ -240,3 +240,11 @@ If you use this package, please cite the original SPLIT work and acknowledge thi
 ## License
 
 GNU GPLv3 — matching the upstream SPLIT license.
+
+## Updated real-data validation
+
+See [measured R comparisons and limitations](RECONSTRUCTION_REPORT.md) and the executed real-data notebook in `examples/`. Synthetic signal tests are not evidence of R equivalence.
+
+Residual recipients now default to non-rejected neighbors matching the sender secondary type. `receiver_policy="all"` explicitly selects the former Python-only behavior.
+
+SPLIT-shift now updates swapped purified profiles to nonnegative raw-minus-purified counts, matching the native R branch. Missing class values do not trigger swaps. Balance status preserves the original raw status of single-type profiles; rejected rows remain zeroed for AnnData alignment.

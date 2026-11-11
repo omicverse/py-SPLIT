@@ -1,0 +1,10 @@
+{
+  "upstream_repository": "https://github.com/bdsc-tds/SPLIT",
+  "validation_date": "2026-11-10",
+  "fixtures": {
+    "examples/data/split_dlpfc_151673.npz": {
+      "sha256": "1ff62c1b30e04b7d348c6cd2870960272df7464b77badd2e643684029a551408",
+      "bytes": 1633720
+    }
+  }
+}

@@ -123,7 +123,8 @@ def test_balance_selects_purified_profiles_by_score():
     purified = np.asarray(adata.layers["split_purified"])
     assert np.allclose(balanced[:5], purified[:5])
     assert np.allclose(balanced[5:], raw[5:])
-    assert list(adata.obs["split_balance_status"][:5]) == ["purified"] * 5
+    assert list(adata.obs["split_balance_status"][:5]) == list(adata.obs["purification_status"][:5])
+    # R keeps single-type profiles raw even if the score selects that layer.
     assert set(adata.obs["split_balance_status"][5:]) == {"raw"}
 
 
@@ -138,7 +139,7 @@ def test_balance_spot_class_can_force_doublet_and_reject():
     split.balance(adata, threshold=0.15, spot_class_key="spot_class")
 
     balanced = adata.layers["split_balanced"].toarray()
-    assert adata.obs["split_balance_status"].iloc[0] == "purified"
+    assert adata.obs["split_balance_status"].iloc[0] == adata.obs["purification_status"].iloc[0]
     assert adata.obs["split_balance_status"].iloc[1] == "removed"
     assert np.allclose(balanced[1], 0.0)
 
